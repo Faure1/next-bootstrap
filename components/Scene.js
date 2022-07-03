@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, Suspense } from 'react'
 import * as THREE from 'three'
 import { Color, CubeReflectionMapping } from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
@@ -73,7 +73,7 @@ export const Scene = () => {
                 //roughnessMap:roughnessMap,
                 //normalMap:normalMap,
                 displacementMap:heightMap,
-                displacementScale:0.03
+                displacementScale:0.05
             } )
             const circulo = new THREE.Mesh(geometry1,material2)
         scene.add(circulo)
@@ -85,27 +85,30 @@ export const Scene = () => {
 
         //lunatexturas
         const textureLoader1 = new THREE.TextureLoader()
-        const map1 = textureLoader.load('./assets/Albedo.jpg')
+        const map1 = textureLoader.load('./assets/lunacolor.jpg')
         const aoMap1 = textureLoader.load('./assets/night_lights_modified.png')
         const roughnessMap1 = textureLoader.load('./assets/Clouds.png')
         const normalMap1 = textureLoader.load('./assets/Clouds.png' )
         const heightMap1 = textureLoader.load('./assets/Bump.jpg')
-        //tierra
-            const geometry = new THREE.SphereGeometry(0.8,32,16,
+        //luna
+            const geometry = new THREE.SphereGeometry(0.3,32,16,
                 )
             const material = new THREE.MeshStandardMaterial({
-                map:map,
-                aoMap:aoMap,
-                //roughnessMap:roughnessMap,
-                //normalMap:normalMap,
-                displacementMap:heightMap,
-                displacementScale:0.03
+                map:map1,
+                //aoMap:aoMap1,
+                //roughnessMa1p:roughnessMap,
+                //normalMap1:normalMap,
+                //displacementMap:heightMap1,
+                //displacementScale:0.03
             } )
             const luna = new THREE.Mesh(geometry,material)
-            luna.position.y = 2
-        scene.add(luna)
+            luna.position.x = 2
+        //movimiento
+        const lunaobj = new THREE.Object3D()
+        lunaobj.add(luna)
+        scene.add(lunaobj)
         //luz
-        const A0 = new THREE.AmbientLight(0xffffffff,0.02)
+        const A0 = new THREE.AmbientLight(0xffffffff,0.1)
         scene.add(A0)
         const pointLight = new THREE.PointLight(
             0xffffffff,
@@ -131,9 +134,13 @@ export const Scene = () => {
             './assets/nz.png',
         ])
         //scene.environment = envMap
-        //scene.background = envMap
+        scene.background = envMap
         //renderer scene
+
         const animate = () =>{
+            circulo.rotateY(0.004)
+            luna.rotateY(0.004)
+            lunaobj.rotateY(0.02)
             controls.update()
             renderer.render(scene,camera)
             requestAnimationFrame(animate)
